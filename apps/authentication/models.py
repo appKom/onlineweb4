@@ -250,6 +250,11 @@ class OnlineUser(AbstractUser):
         return value if value is not None else 0
 
     @property
+    def olcoins(self) -> int:
+        value = ()
+        return #APPTODO: make this into a new currency property.
+
+    @property
     def year(self):
         start_year = get_start_of_field_of_study(self.field_of_study)
         length_of_study = get_length_of_field_of_study(self.field_of_study)
