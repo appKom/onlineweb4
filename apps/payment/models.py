@@ -339,8 +339,10 @@ class PaymentTransaction(ReceiptMixin, StripeMixin, models.Model):
     objects = TransactionManager()
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    amount = models.IntegerField(null=True, blank=True)
+    nok_amount = models.IntegerField(null=True, blank=True)
     """Amount in NOK"""
+    olcoin_amount = models.IntegerField(null=True, blank=True)
+    """Amount in Olcoins"""
     source = models.CharField(max_length=64, choices=TransactionSource.ALL_CHOICES)
     """ Origin of the transaction, such as purchases in Nibble or additions from Stripe """
     datetime = models.DateTimeField(auto_now_add=True)

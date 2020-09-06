@@ -244,15 +244,19 @@ class OnlineUser(AbstractUser):
     def saldo(self) -> int:
         value = (
             self.paymenttransaction_set.filter(status=PaymentStatus.DONE)
-            .aggregate(coins=models.Sum("amount"))
+            .aggregate(coins=models.Sum("nok_amount"))
             .get("coins")
         )
         return value if value is not None else 0
 
     @property
-    def olcoins(self) -> int:
-        value = ()
-        return #APPTODO: make this into a new currency property.
+    def olsaldo(self) -> int:
+        value = (
+            self.paymenttransaction_set.filter(status=PaymentStatus.DONE)
+            .aggregate(coins=models.Sum("olcoin_amount"))
+            .get("coins")
+        )
+        return value if value is not None else 0
 
     @property
     def year(self):

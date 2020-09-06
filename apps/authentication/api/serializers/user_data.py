@@ -202,7 +202,7 @@ class PaymentTransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaymentTransaction
-        fields = ("amount", "used_stripe", "datetime", "status", "description", "items")
+        fields = ("nok_amount", "olcoin_amount", "used_stripe", "datetime", "status", "description", "items")
 
 
 class PaymentPriceSerializer(serializers.ModelSerializer):
