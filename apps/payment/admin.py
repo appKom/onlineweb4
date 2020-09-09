@@ -86,7 +86,7 @@ class PaymentReceiptAdmin(admin.ModelAdmin):
 
 class PaymentTransactionAdmin(VersionAdmin):
     model = PaymentTransaction
-    list_display = ("__str__", "user", "datetime", "amount", "used_stripe", "source")
+    list_display = ("__str__", "user", "datetime", "nok_amount", "olcoin_amount", "used_stripe", "source")
 
 
 admin.site.register(PaymentReceipt, PaymentReceiptAdmin)

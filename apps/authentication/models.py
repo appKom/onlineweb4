@@ -240,20 +240,12 @@ class OnlineUser(AbstractUser):
             return None
         return Membership.objects.get(username=self.ntnu_username.lower())
 
+    #APPKOMTODO: redefine as class Balance
     @property
     def saldo(self) -> int:
         value = (
             self.paymenttransaction_set.filter(status=PaymentStatus.DONE)
             .aggregate(coins=models.Sum("nok_amount"))
-            .get("coins")
-        )
-        return value if value is not None else 0
-
-    @property
-    def olsaldo(self) -> int:
-        value = (
-            self.paymenttransaction_set.filter(status=PaymentStatus.DONE)
-            .aggregate(coins=models.Sum("olcoin_amount"))
             .get("coins")
         )
         return value if value is not None else 0
@@ -336,6 +328,34 @@ class OnlineUser(AbstractUser):
         permissions = (("view_onlineuser", "View OnlineUser"),)
         default_permissions = ("add", "change", "delete")
 
+
+class Balance(models.Model):
+    nok = models.IntegerField()
+    olcoins = models.IntegerField()
+
+    @property
+    def nok(self) -> int:
+        value = (
+            self.paymenttransaction_set.filter(status=PaymentStatus.DONE)
+            .aggregate(coins=models.Sum("nok_amount"))
+            .get("coins")
+        )
+        return value if value is not None else 0
+
+    @property
+    def olcoins(self) -> int:
+        value = (
+            self.paymenttransaction_set.filter(status=PaymentStatus.DONE)
+            .aggregate(coins=models.Sum("olcoin_amount"))
+            .get("coins")
+        )
+        return value if value is not None else 0
+
+    class Meta:
+        verbose_name = _("saldo")
+        verbose_name_plural = _("saldoer")
+        permissions = (("view_balance", "View Balance"),)
+        default_permissions = ("add", "change", "delete")
 
 class Email(models.Model):
     user = models.ForeignKey(
@@ -453,7 +473,6 @@ class Position(models.Model):
         ordering = ("user", "period_start", "period_end")
         permissions = (("view_position", "View Position"),)
         default_permissions = ("add", "change", "delete")
-
 
 class SpecialPosition(models.Model):
     """

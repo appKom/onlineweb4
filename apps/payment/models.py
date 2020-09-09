@@ -191,6 +191,7 @@ class Payment(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
+#APPKOMTODO: alter the price definition
 class PaymentPrice(models.Model):
     payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
     """Payment object"""
@@ -324,10 +325,11 @@ class TransactionManager(models.Manager):
         """
         value = (
             self.filter(user=user, status=status.DONE)
-            .aggregate(coins=models.Sum("amount"))
+            .aggregate(coins=models.Sum("nok_amount"))
             .get("coins")
         )
         return value if value is not None else 0
+        #APPKOMTODO: is this actually used?
 
 
 class PaymentTransaction(ReceiptMixin, StripeMixin, models.Model):
@@ -369,14 +371,14 @@ class PaymentTransaction(ReceiptMixin, StripeMixin, models.Model):
 
     def get_receipt_items(self):
         if self.source == TransactionSource.STRIPE:
-            return [{"name": "Påfyll av saldo", "price": self.amount, "quantity": 1}]
+            return [{"name": "Påfyll av saldo", "price": self.nok_amount, "quantity": 1}]
         elif self.source == TransactionSource.TRANSFER:
             return [
-                {"name": "Overføring av saldo", "price": self.amount, "quantity": 1}
+                {"name": "Overføring av saldo", "price": self.nok_amount, "quantity": 1}
             ]
         elif self.source == TransactionSource.CASH:
             return [
-                {"name": "Påfyll av kontanter", "price": self.amount, "quantity": 1}
+                {"name": "Påfyll av kontanter", "price": self.nok_amount, "quantity": 1}
             ]
         elif self.source == TransactionSource.SHOP:
             if hasattr(self, "shop_order_line"):
@@ -393,7 +395,7 @@ class PaymentTransaction(ReceiptMixin, StripeMixin, models.Model):
         return self.user
 
     def __str__(self):
-        return f"{self.user} - {self.amount} ({self.datetime})"
+        return f"{self.user} - NOK:{self.nok_amount}, OLCOIN:{self.olcoin_amount} ({self.datetime})"
 
     class Meta:
         ordering = ["-datetime"]
